@@ -28,6 +28,9 @@
     {# inclusion du menu principal du site #}
     {% include 'partials/_main_navbar.html.twig' %}
 
+    {# inclusion de l'aafichage des messages flashes de type "success" et "error" #}
+    {% include'partials/_flashes.html.twig' %}
+
     {# Bloc pour afficher le contenu des pages #}
     {% block body %}{% endblock %}
 
