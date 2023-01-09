@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Article;
-use App\Form\RegistrationFormType;
+use App\Form\NewPublicationFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,7 +30,7 @@ class BlogController extends AbstractController
         $newArticle = new Article();
 
         // Création d'un formulaire de création d'article, lié à l'article vide
-        $form = $this->createForm(RegistrationFormType::class, $newArticle);
+        $form = $this->createForm(NewPublicationFormType::class, $newArticle);
 
         // Liaison des données POST aux formulaires
         $form->handleRequest($request);
@@ -64,7 +64,7 @@ class BlogController extends AbstractController
 
 
     /*
-     * Controleur de la page permettent de créer un nouvel article
+     * Contrôleur de la page permettent de créer un nouvel article
      * */
     #[Route('/publication/liste/', name: 'publication_list')]
     public function publicationList(ManagerRegistry $doctrine): response
@@ -82,4 +82,10 @@ class BlogController extends AbstractController
             'articles' => $articles, // On envoie les articles à la vue Twig
         ]);
     }
+
+
+    /*
+     * Contrôleur de la page permettant de voir n article en détail
+     * */
+
 }
