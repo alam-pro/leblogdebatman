@@ -4,6 +4,8 @@ twig:
     default_path: '%kernel.project_dir%/templates'
     globals:
         site_name: 'Le Blog de Batman'
+        # Clé publique Google recaptcha
+        google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
 
 when@test:
     twig:
