@@ -4,11 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Form\NewPublicationFormType;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -69,17 +72,29 @@ class BlogController extends AbstractController
     /*
      * Contrôleur de la page permettent de créer un nouvel article
      * */
-    #[Route('/publication/liste/', name: 'publication_list')]
-    public function publicationList(ManagerRegistry $doctrine): response
+    #[Route('/publications/liste/', name: 'publication_list')]
+    public function publicationList(ManagerRegistry $doctrine, Request $request, PaginatorInterface $paginator): response
     {
-        // Récupération du repository des articles
-        $articleRepo = $doctrine->getRepository(Article::class);
 
-        // On demande au repository de nous donner tous les articles qui sont en BDD
-        $articles = $articleRepo->findAll();
+        // Récupération du numéro de la page demendée dans l'url
+        $requestedPge = $request->query->getInt('page', 1);
 
-        //dump($articles);
-        //$articles = [];
+        // Vérification que le numéro est positif
+        if ($requestedPge < 1){
+            throw new NotFoundHttpException();
+        }
+
+        // Manager général des entités
+        $em = $doctrine->getManager();
+
+        $query = $em->createQuery('SELECT a FROM App\Entity\Article a ORDER BY a.publicationDate DESC');
+
+        // Récupération des articles
+        $articles = $paginator->paginate(
+            $query,
+            $requestedPge,
+            10
+        );
 
         return $this->render('blog/publication_list.html.twig', [
             'articles' => $articles, // On envoie les articles à la vue Twig
